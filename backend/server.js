@@ -56,8 +56,9 @@ app.use((req, res, next) => {
 // Remplacer VOTRE_URL_VERCEL par l'URL fournie par Vercel après déploiement
 // Exemple: https://gestion-des-appels.vercel.app
 const allowedOrigins = [
-  'http://localhost:5173',
-  process.env.FRONTEND_URL,         // Variable à définir sur Render
+//  'http://localhost:5173',
+  'https://call-center-mshpcmu.vercel.app',
+  //process.env.FRONTEND_URL,         // Variable à définir sur Render
 ].filter(Boolean)
 
 app.use(cors({
