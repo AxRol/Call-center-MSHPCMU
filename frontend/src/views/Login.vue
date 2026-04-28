@@ -56,6 +56,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { API_BASE } from '@/config/api.js'
 
 const router = useRouter()
 const isLoading     = ref(false)
@@ -89,7 +90,7 @@ async function handleLogin() {
   if (!validateLoginForm()) return
   isLoading.value = true
   try {
-    const response = await fetch('http://localhost:5170/api/auth/login', {
+    const response = await fetch(`${API_BASE}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
