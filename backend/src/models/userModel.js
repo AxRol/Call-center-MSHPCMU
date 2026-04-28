@@ -8,6 +8,7 @@ export const getAllUser = async (req, res) => {
     );
     res.status(200).json({success: true, message: "Utilisateurs récupérés avec succès", data: users.rows});
   } catch (err) {
+    console.error('getAllUser error:', err.message);
     res.status(500).json({message: "Erreur lors de la récupération des utilisateurs", error: "Erreur serveur"});
   }
 };
@@ -42,6 +43,7 @@ export const addUser = async (req, res) => {
     );
     res.status(201).json({success: true, message: "Utilisateur créé avec succès", data: user.rows[0] });
   } catch (err) {
+    console.error('addUser error:', err.message);
     res.status(500).json({ message: "Erreur lors de la création de l'utilisateur", error: "Erreur serveur" });
   }
 };
@@ -68,6 +70,7 @@ export const updateUser = async (req, res) => {
     }
     res.status(200).json({success: true, message: "Utilisateur mis à jour avec succès", data: user.rows[0]});
   } catch (err) {
+    console.error('updateUser error:', err.message);
     res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur", error: "Erreur serveur" });
   }
 };

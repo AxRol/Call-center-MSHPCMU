@@ -25,18 +25,17 @@ export const getAllTicket = async (req, res) => {
 export const getOneTicket = async (req, res) => {
     let { id } = req.params;
     let sql =  `
-        SELECT t.uid, t.code, t.appel_id, t.numero_appellant, t.type_requetes_code AS code_requete, tr.libelle AS requete, u1.username AS créé_par, t.statut, t.priorite, t.raison, 
-	    u2.username AS assigne_a, u3.username AS traite_par, t.resolution, a.created_at AS date_enreig_appel, t.created_at AS date_creation, t.updated_at AS date_traitement 
+        SELECT t.uid, t.code, t.appel_id, t.numero_appellant, t.type_requetes_code AS code_requete, tr.libelle AS requete, u1.username AS créé_par, t.statut, t.priorite, t.raison,
+	    u2.username AS assigne_a, u3.username AS traite_par, t.resolution, a.created_at AS date_enreig_appel, t.created_at AS date_creation, t.updated_at AS date_traitement
         FROM tickets t
         LEFT JOIN appels a ON a.uid = t.appel_id
         LEFT JOIN users u1 ON u1.uid = a.user_id
 		LEFT JOIN users u2 ON u2.uid = t.user_assigne_id
 		LEFT JOIN users u3 ON u3.uid = t.user_traiteur_id
         LEFT JOIN types_requetes tr ON tr.code = a.type_requetes_code
-		WHERE t.is_active = true
-		ORDER BY t.created_at DESC
-        WHERE t.uid = $1 and t.is_active = true
-    `; 
+        WHERE t.uid = $1 AND t.is_active = true
+        ORDER BY t.created_at DESC
+    `;
     try {
         let ticket = await db.query(sql, [id]);
         if (ticket.rows.length === 0) {
@@ -97,20 +96,20 @@ export const addTicket = async (req, res) => {
 
   // VALIDATION
 
-  if (!appel_uid || !numero_appellant || !type_requetes_code || !user_uid || !raison) {
+  if (!appel_uid || !numero_appellant || !type_requetes_code || !raison) {
     return res.status(400).json({ success: false, message: 'Tous les champs sont requis' })
   }
 
   let code = `T-${type_requetes_code}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
 
   let sql = `
-    INSERT INTO tickets (code, appel_id, numero_appellant, type_requetes_code, user_uid, raison)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO tickets (code, appel_id, numero_appellant, type_requetes_code, raison)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING *
   `
 
   try {
-    let result = await db.query(sql, [code, appel_uid, numero_appellant, type_requetes_code, user_uid, raison])
+    let result = await db.query(sql, [code, appel_uid, numero_appellant, type_requetes_code, raison])
     return res.status(201).json({ success: true, message: 'Ticket créé avec succès', data: result.rows[0] })
   } catch (err) {
     console.error('Erreur création ticket:', err)
