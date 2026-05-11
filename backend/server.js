@@ -66,7 +66,8 @@ app.use((req, res, next) => {
 // Exemple: https://gestion-des-appels.vercel.app
 const allowedOrigins = [
 //  'http://localhost:5173',
-  'https://call-center-mshpcmu.vercel.app',
+ // 'https://call-center-mshpcmu.vercel.app',
+ 'https://call-center-mshpcmu-test-3.onrender.com'
   //process.env.FRONTEND_URL,         // Variable à définir sur Render
 ].filter(Boolean)
 
