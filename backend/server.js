@@ -22,8 +22,8 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 const app = express();
 
 //Middleware
-app.use(session({
-    secret: process.env.SESSION_SECRET,
+/* app.use(session({
+    secret: process.env.SESSION_SECRET || ,
     resave: false,
     saveUninitialized: false,
     cookie: { 
@@ -32,6 +32,15 @@ app.use(session({
       httpOnly: true
     }
   }));
+ */
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'mshpcmu_callcenter_2026_ultra_secure_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false
+    }
+}));
 
 app.use(bodyParser.json({
   verify: (req, res, buf, encoding) => {

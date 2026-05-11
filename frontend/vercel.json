@@ -1,5 +1,9 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/back_office",        "destination": "/index.html" },
+    { "source": "/back_office/(.*)",   "destination": "/index.html" },
+    { "source": "/front_office",       "destination": "/index.html" },
+    { "source": "/front_office/(.*)",  "destination": "/index.html" },
+    { "source": "/(.*)",               "destination": "/index.html" }
   ]
 }
