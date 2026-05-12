@@ -149,7 +149,7 @@
     <div class="table-card" v-if="!isInspecteur">
       <div class="table-header">
         <h3>Appels récents</h3>
-        <router-link to="/back_office/appels" class="btn-text">Voir tout →</router-link>
+        <router-link to="/appels" class="btn-text">Voir tout →</router-link>
       </div>
       <table class="data-table">
         <thead>
@@ -193,7 +193,7 @@
           (c'est géré par un paramètre d'URL: ?mine=1).
         -->
         <router-link
-          :to="isInspecteur ? { path: '/back_office/tickets', query: { mine: '1' } } : '/back_office/tickets'"
+          :to="isInspecteur ? { path: '/tickets', query: { mine: '1' } } : '/tickets'"
           class="btn-text"
         >
           Voir tout →
@@ -375,7 +375,7 @@ const ticketsThisMonth = computed(() =>
 function openTicketFromDashboard(ticket) {
   const query = { open: String(ticket?.id || '') }
   if (isInspecteur.value || isAgent.value) query.mine = '1'
-  router.push({ path: '/back_office/tickets', query })
+  router.push({ path: '/tickets', query })
 }
 
 // Si le token est invalide (ou expiré), on redirige vers la page de login.
