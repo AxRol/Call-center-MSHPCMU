@@ -16,7 +16,7 @@ import Appels from '@/views/Appels.vue'
 import Types_Appels from '@/views/Types_Appels.vue'
 import Types_Requetes from '@/views/Types_Requetes.vue'
 import Tickets from '@/views/Tickets.vue'
-import localite from '@/views/Localite.vue'
+import Localite from '@/views/Localite.vue'
 import Rapports from '@/views/Rapports.vue'
 import Utilisateurs from '@/views/Utilisateurs.vue'
 import Equipes from '@/views/Equipes.vue'
@@ -39,7 +39,7 @@ const routes = [
   { path: '/typeappels', name: 'Types_Appels', component: Types_Appels },
   { path: '/typerequetes', name: 'Types_Requetes', component: Types_Requetes },
   { path: '/tickets', name: 'Tickets', component: Tickets },
-  { path: '/localites', name: 'localite', component: localite },
+  { path: '/localites', name: 'Localite', component: Localite }
   { path: '/rapports', name: 'Rapports', component: Rapports },
   { path: '/utilisateurs', name: 'Utilisateurs', component: Utilisateurs },
   { path: '/equipes', name: 'Equipes', component: Equipes },
