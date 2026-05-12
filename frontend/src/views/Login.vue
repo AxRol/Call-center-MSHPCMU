@@ -101,7 +101,7 @@ async function handleLogin() {
       succesMessage.value = data.message
       localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
-      router.push('/back_office/dashboard')
+      router.push('/dashboard')
     } else {
       errorMessage.value = data.message || 'Erreur de connexion'
     }

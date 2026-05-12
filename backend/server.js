@@ -23,7 +23,7 @@ const app = express();
 
 //Middleware
 app.use(session({
-    secret: process.env.SESSION_SECRET || ,
+    secret: process.env.SESSION_SECRET || 'mshpcmu_callcenter_2026_ultra_secure_key',
     resave: false,
     saveUninitialized: false,
     cookie: { 
@@ -65,9 +65,9 @@ app.use((req, res, next) => {
 // Remplacer VOTRE_URL_VERCEL par l'URL fournie par Vercel après déploiement
 // Exemple: https://gestion-des-appels.vercel.app
 const allowedOrigins = [
-//  'http://localhost:5173',
+  'http://localhost:5173',
   'https://call-center-mshpcmu.vercel.app',
-// 'https://call-center-mshpcmu-test-3.onrender.com'
+ 'https://call-center-mshpcmu-test-3.onrender.com'
   //process.env.FRONTEND_URL,         // Variable à définir sur Render
 ].filter(Boolean)
 
