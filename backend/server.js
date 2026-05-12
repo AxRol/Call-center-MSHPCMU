@@ -22,7 +22,7 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 const app = express();
 
 //Middleware
-/* app.use(session({
+app.use(session({
     secret: process.env.SESSION_SECRET || ,
     resave: false,
     saveUninitialized: false,
@@ -32,8 +32,8 @@ const app = express();
       httpOnly: true
     }
   }));
- */
-  app.use(session({
+
+ /*  app.use(session({
     secret: process.env.SESSION_SECRET || 'mshpcmu_callcenter_2026_ultra_secure_key',
     resave: false,
     saveUninitialized: false,
@@ -41,7 +41,7 @@ const app = express();
         secure: false
     }
 }));
-
+ */
 app.use(bodyParser.json({
   verify: (req, res, buf, encoding) => {
     try {
@@ -66,8 +66,8 @@ app.use((req, res, next) => {
 // Exemple: https://gestion-des-appels.vercel.app
 const allowedOrigins = [
 //  'http://localhost:5173',
- // 'https://call-center-mshpcmu.vercel.app',
- 'https://call-center-mshpcmu-test-3.onrender.com'
+  'https://call-center-mshpcmu.vercel.app',
+// 'https://call-center-mshpcmu-test-3.onrender.com'
   //process.env.FRONTEND_URL,         // Variable à définir sur Render
 ].filter(Boolean)
 
