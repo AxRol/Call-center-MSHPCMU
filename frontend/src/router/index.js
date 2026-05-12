@@ -21,6 +21,7 @@ import Rapports from '@/views/Rapports.vue'
 import Utilisateurs from '@/views/Utilisateurs.vue'
 import Equipes from '@/views/Equipes.vue'
 
+
 // note: component name matches file spelling (Dashbord) intentionally
 
 
@@ -30,7 +31,7 @@ const routes = [
   { path: '/login', name: 'Login', component: Login },
   // {path: '/logout', name: 'Logout', component: Login },
   { path: '/inscription', name: 'Inscription', component: Inscription  },
-  { path: '/front_office/formulaire_appel', name: 'Formulaire_appel', component: Formulaire_appel},
+  { path: '/formulaire_appel', name: 'Formulaire_appel', component: Formulaire_appel},
 
 
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
@@ -42,6 +43,7 @@ const routes = [
   { path: '/rapports', name: 'Rapports', component: Rapports },
   { path: '/utilisateurs', name: 'Utilisateurs', component: Utilisateurs },
   { path: '/equipes', name: 'Equipes', component: Equipes },
+
 
 ]
 

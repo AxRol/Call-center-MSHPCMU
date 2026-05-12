@@ -20,6 +20,7 @@
 
     <nav class="sidebar-nav">
       <div class="nav-section">
+
         <router-link to="/dashboard" class="nav-item" active-class="active">
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -31,7 +32,7 @@
           </span>
           <span class="nav-text">Dashboard</span>
         </router-link>
-
+        
         <router-link to="/appels" class="nav-item" active-class="active" v-if="userRole !='inspecteur'">
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -58,7 +59,9 @@
 
       <div class="nav-section" v-if="['admin', 'manager', 'superviseur'].includes(userRole)">
         <span class="nav-label">Paramètres</span>
+
         <router-link to="/typerequetes" class="nav-item" active-class="active">
+
           <span class="nav-icon">
            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 2V5" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -70,7 +73,9 @@
           </span>
           <span class="nav-text">Catégorie de requête</span>
         </router-link>
+
         <router-link to="/typeappels" class="nav-item" active-class="active">
+
           <span class="nav-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" stroke-width="1.5"/>
@@ -84,7 +89,9 @@
           </span>
           <span class="nav-text">Catégorie d'appel</span>
         </router-link>
+
         <router-link to="/localites" class="nav-item" active-class="active">
+
           <span class="nav-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5"/>
@@ -95,7 +102,9 @@
           </span>
           <span class="nav-text">Localités</span>
         </router-link>
+
          <router-link to="/utilisateurs" class="nav-item" active-class="active" v-if="['admin'].includes(userRole)">
+
           <span class="nav-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M17 9C19.2091 9 21 7.20914 21 5C21 2.79086 19.2091 1 17 1C14.7909 1 13 2.79086 13 5C13 7.20914 14.7909 9 17 9Z" stroke="currentColor" stroke-width="1.5"/>
@@ -108,6 +117,7 @@
           </span>
           <span class="nav-text">Utilisateurs</span>
         </router-link>
+
         <router-link to="/equipes" class="nav-item" active-class="active" v-if="['admin'].includes(userRole)">
           <span class="nav-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -119,7 +129,9 @@
           </span>
           <span class="nav-text">Équipes</span>
         </router-link>
+
         <router-link to="/rapports" class="nav-item" active-class="active">
+
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
