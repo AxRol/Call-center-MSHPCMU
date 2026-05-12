@@ -67,7 +67,7 @@ app.use((req, res, next) => {
 const allowedOrigins = [
   'http://localhost:5173',
   'https://call-center-mshpcmu.vercel.app',
- 'https://call-center-mshpcmu-test-3.onrender.com'
+ 'https://call-center-mshpcmu.onrender.com'
   //process.env.FRONTEND_URL,         // Variable à définir sur Render
 ].filter(Boolean)
 
