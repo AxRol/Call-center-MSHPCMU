@@ -39,7 +39,7 @@ const routes = [
   { path: '/typeappels', name: 'Types_Appels', component: Types_Appels },
   { path: '/typerequetes', name: 'Types_Requetes', component: Types_Requetes },
   { path: '/tickets', name: 'Tickets', component: Tickets },
-  { path: '/localites', name: 'Localite', component: Localite }
+  { path: '/localites', name: 'Localite', component: Localite },
   { path: '/rapports', name: 'Rapports', component: Rapports },
   { path: '/utilisateurs', name: 'Utilisateurs', component: Utilisateurs },
   { path: '/equipes', name: 'Equipes', component: Equipes },
