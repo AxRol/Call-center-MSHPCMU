@@ -30,7 +30,7 @@ const connectionConfig = process.env.DATABASE_URL
       database: process.env.DB_NAME,
       port:     Number(process.env.DB_PORT) || 5432,
       ssl:      { rejectUnauthorized: false },
-    }; 
+    };
 
 const pool = new pg.Pool({
   ...connectionConfig,

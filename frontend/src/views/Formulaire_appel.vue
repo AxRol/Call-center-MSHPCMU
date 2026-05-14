@@ -68,7 +68,8 @@
           <div class="grid-form">
             <div class="field">
               <label>Téléphone Appelant <span class="req">*</span></label>
-              <input v-model="formData.client.telephone" type="tel" :class="{ 'error-border': errors.telephone }" placeholder="0000000000" id="telephone">
+              <input id="telephone" type="tel" v-model="formData.client.telephone" placeholder="0000000000" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" 
+              @input="formData.client.telephone = $event.target.value.replace(/[^0-9]/g, '')" :class="{ 'error-border': errors.telephone }" >
             </div>
             <div class="field">
               <label>Civilité</label>
@@ -89,7 +90,7 @@
             </div>
             <div class="field">
               <label>Ville / Localité <span class="req">*</span></label>
-              <select v-model="formData.client.ville" :class="{ 'error-border': errors.ville }">
+              <select v-model="formData.client.ville">
                 <option value="">Choisir une localité...</option>
                 <option v-for="item in localiteOptions" :key="item.uid" :value="item.libelle">{{ item.libelle }}</option>
                 <option value="autre">-- Autre --</option>
