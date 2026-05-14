@@ -13,6 +13,7 @@ import ticketRoutes from "./src/routes/ticketRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import rapportRoutes from "./src/routes/rapportRoutes.js";
 import equipeRoutes from "./src/routes/equipeRoutes.js";
+import localiteRoutes from "./src/routes/localiteRoutes.js";
 //import dashboardRoutes from "./src/routes/dashboardRoutes.js"
 
 const __filename = fileURLToPath(import.meta.url);
@@ -100,6 +101,7 @@ app.use("/api/typeAppel", typeAppelRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/rapport", rapportRoutes)
 app.use("/api/equipe", equipeRoutes)
+app.use("/api/localite", localiteRoutes)
 //app.use("/api/dashbord", dashboardRoutes)
 app.use("/api/typeRequete", typeRequeteRoutes)
 

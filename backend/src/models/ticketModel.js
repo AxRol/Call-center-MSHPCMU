@@ -92,24 +92,24 @@ export const getDateTicket = async (req, res) => {
 }
 
 export const addTicket = async (req, res) => {
-  let { appel_uid, numero_appellant, type_requetes_code, user_uid, raison } = req.body
+  let { appel_id, numero_appellant, type_requetes_code, user_id, raison } = req.body
 
   // VALIDATION
 
-  if (!appel_uid || !numero_appellant || !type_requetes_code || !raison) {
+  if (!appel_id || !numero_appellant || !type_requetes_code || !user_id || !raison) {
     return res.status(400).json({ success: false, message: 'Tous les champs sont requis' })
   }
 
   let code = `T-${type_requetes_code}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
 
   let sql = `
-    INSERT INTO tickets (code, appel_id, numero_appellant, type_requetes_code, raison)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO tickets (code, appel_id, numero_appellant, type_requetes_code, user_uid, raison)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *
   `
 
   try {
-    let result = await db.query(sql, [code, appel_uid, numero_appellant, type_requetes_code, raison])
+    let result = await db.query(sql, [code, appel_id, numero_appellant, type_requetes_code, user_id, raison])
     return res.status(201).json({ success: true, message: 'Ticket créé avec succès', data: result.rows[0] })
   } catch (err) {
     console.error('Erreur création ticket:', err)

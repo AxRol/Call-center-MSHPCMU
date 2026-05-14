@@ -3,8 +3,8 @@
     <!-- Onglets -->
     <div class="tabs-container">
       <div class="tabs">
-        <button class="tab" :class="{ active: activeTab === 'client',  disabled: !canAccessRequeteTab }" :disabled="!canAccessRequeteTab" @click="activeTab = 'client'">👤 Informations de l'appelant</button>
-        <button class="tab" :class="{ active: activeTab === 'requete', disabled: !canAccessRequeteTab }" :disabled="!canAccessRequeteTab"  @click="openRequeteTab">📋 Détail de la Requête</button>
+        <button type="button" class="tab" :class="{ active: activeTab === 'client' }" @click="activeTab = 'client'" >👤 Informations de l'appelant</button>
+        <button type="button" class="tab" :class="{ active: activeTab === 'requete' }" @click="openRequeteTab">📋 Détail de la Requête</button>
         <!-- <button class="tab" :class="{ active: activeTab === 'historique' }" @click="activeTab = 'historique'">📜 Historique</button> -->
       </div>
     </div>
@@ -82,17 +82,9 @@
         <div class="form-grid">
           <div class="form-row">
             <div class="form-group">
-              <label>Numéro de téléphone <span class="required">*</span></label>
-              <input
-                type="tel"
-                v-model="formData.client.telephone"
-                placeholder="0000000000"
-                maxlength="10"
-                pattern="[0-9]{10}"
-                inputmode="numeric"
-                @input="formData.client.telephone = $event.target.value.replace(/[^0-9]/g, '')"
-                :class="{ 'error-border': errors.telephone }"
-              >
+              <label>Numéro appelant <span class="required">*</span></label>
+              <input id="telephone" type="tel" v-model="formData.client.telephone" placeholder="0000000000" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" 
+              @input="formData.client.telephone = $event.target.value.replace(/[^0-9]/g, '')" :class="{ 'error-border': errors.telephone }" >
             </div>
             <div class="form-group">
               <label>Civilité</label>
@@ -131,9 +123,19 @@
               >
             </div>
             <div class="form-group">
-              <label>Localité</label>
-              <input type="text" v-model="formData.client.ville" placeholder="La localité de l'appelant">
+              <label>Ville / commune / localité <span class="required">*</span></label>
+              <select v-model="formData.client.ville" :class="{ 'error-border': errors.ville }" @change="handleVilleChange">
+                <option value="">-- Sélectionnez une ville/commune/localité --</option>
+                <option v-for="item in localiteOptions" :key="item.uid" :value="item.libelle">{{ item.libelle }}</option>
+                <option value="autre">Autre (préciser la ville/commune/localité)</option>
+              </select>
+               <!-- Affiché uniquement si "autre" -->
+             <div  v-if="formData.client.ville === 'autre'">
+              <label>Précisez la ville/commune/localité</label>
+              <input type="text" v-model="formData.client.ville_autre" placeholder="Saisissez la ville/commune/localité">
             </div>
+            </div>
+            
           </div>
 
           <div class="form-row">
@@ -146,11 +148,16 @@
             </div>
             <div class="form-group checkbox-group">
               <div class="checkbox-item">
+                <input type="checkbox" id="masquage" v-model="formData.client.masquage" @change="handleMasquageChange">
+                <label for="masquage">Masquer le numéro appelant</label>
+              </div>
+              <div class="checkbox-item">
                 <input type="checkbox" id="anonymat" v-model="formData.client.anonymat" @change="handleAnonymatChange">
                 <label for="anonymat">Anonymat</label>
               </div>
             </div>
           </div>
+
 
           <!-- Bouton Suivant -->
           <div class="action-bar">
@@ -296,10 +303,13 @@ const apiTypeAppel  = API_BASE + '/api/typeAppel'
 const apiTypeRequete = API_BASE + '/api/typeRequete'
 const apiLogout     = API_BASE + '/api/auth/logout'
 const apiTicket     = API_BASE + '/api/ticket'
+const apiLocalite   = API_BASE + '/api/localite'
 
 // ── ONGLET ACTIF ──
 const activeTab      = ref('client')
 const showLogoutModal = ref(false)
+
+const openRequeteTab = () => { activeTab.value = 'requete' }
 
 // ─────────────────────────────────────────────────
 // ── RECHERCHE PAR TÉLÉPHONE (100 % frontend) ──
@@ -333,14 +343,11 @@ const loadAppelsCache = async () => {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-
     const resp = await fetch(apiBase, {
       headers: { 'Authorization': `Bearer ${token}` },
       credentials: 'include'
     })
-
     if (!resp.ok) return
-
     const result = await resp.json()
     const items  = Array.isArray(result)       ? result
                  : Array.isArray(result.data)  ? result.data
@@ -440,7 +447,7 @@ const resetSearch = () => {
 const formData = reactive({
   client: {
     telephone: '', civilite: '', nom: '', prenom: '',
-    telephone_perso: '', ville: '', typeAppel: '', anonymat: false
+    telephone_perso: '', ville: '', typeAppel: '', anonymat: false, masquage: false
   },
   requete: {
     typeRequete: '', objetRequete: '', detailRequete: '',
@@ -449,12 +456,15 @@ const formData = reactive({
 })
 
 const errors = reactive({
-  nom: false, prenom: false, telephone: false, typeAppel: false,
+  nom: false, prenom: false, telephone: false, ville: false, typeAppel: false,
   typeRequete: false, objetRequete: false, detailRequete: false
 })
 
 const typeAppelOptions  = ref([])
 const typeRequeteOptions = ref([])
+const localiteOptions = ref([])
+
+
 
 // ── UTILISATEUR ──
 const user = ref({})
@@ -494,6 +504,17 @@ const loadTypeRequete = async () => {
   } catch (e) { console.error('Erreur types requête:', e) }
 }
 
+const loadLocalite = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    const resp = await fetch(apiLocalite, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      credentials: 'include'
+    })
+    if (resp.ok) { const r = await resp.json(); localiteOptions.value = r.data || [] }
+  } catch (e) { console.error('Erreur localités:', e) }
+}
 onMounted(() => {
   const token = localStorage.getItem('token')
   if (!token) { alert('Vous devez être connecté.'); router.push('/login'); return }
@@ -503,6 +524,7 @@ onMounted(() => {
 
   loadTypeAppel()
   loadTypeRequete()
+  loadLocalite()
   loadAppelsCache()   // ← charge le cache pour la recherche
 })
 
@@ -531,9 +553,10 @@ const goToRequete = () => {
   errors.telephone = !formData.client.telephone
   errors.nom       = !formData.client.nom
   errors.prenom    = !formData.client.prenom
+  errors.ville     = !String(formData.client.ville || '').trim()
   errors.typeAppel = !formData.client.typeAppel
 
-  const clientValid = !errors.telephone && !errors.nom && !errors.prenom && !errors.typeAppel
+  const clientValid = !errors.telephone && !errors.nom && !errors.prenom && !errors.ville && !errors.typeAppel
   if (!clientValid) {
     alert('Veuillez remplir tous les champs obligatoires avant de continuer.')
     return
@@ -546,6 +569,7 @@ const validate = () => {
   errors.telephone    = !formData.client.telephone
   errors.nom          = !formData.client.nom
   errors.prenom       = !formData.client.prenom
+  errors.ville        = !String(formData.client.ville || '').trim()
   errors.typeAppel    = !formData.client.typeAppel
   errors.typeRequete  = !formData.requete.typeRequete
   errors.objetRequete = !formData.requete.objetRequete
@@ -557,27 +581,27 @@ const validate = () => {
 const submitForm = async () => {
   if (!validate()) {
     alert('Veuillez remplir tous les champs obligatoires.')
-    activeTab.value = (errors.nom || errors.prenom || errors.telephone || errors.typeAppel)
+    activeTab.value = (errors.nom || errors.prenom || errors.telephone || errors.ville || errors.typeAppel)
       ? 'client' : 'requete'
     return
   }
-
   const data_appel = {
-    telephone:      formData.client.telephone,
-    civilite:       formData.client.civilite,
-    nom:            formData.client.nom,
-    prenom:         formData.client.prenom,
-    telephone_perso: formData.client.telephone_perso,
-    ville:          formData.client.ville,
-    typeAppel:      formData.client.typeAppel,
-    typeRequete:    formData.requete.typeRequete,
-    objetRequete:   formData.requete.objetRequete,
-    detailRequete:  formData.requete.detailRequete,
-    userId:         user.value.id,
-    satisfaction:   formData.requete.satisfaction || 'non_satisfait',
-    ticket:         formData.requete.ticket,
-    raison_ticket:  formData.requete.raisonticket
-  }
+  telephone:       formData.client.telephone,
+  civilite:        formData.client.civilite,
+  nom:             formData.client.nom,
+  prenom:          formData.client.prenom,
+  telephone_perso: formData.client.telephone_perso,
+  ville: formData.client.ville === 'autre' ? formData.client.ville_autre : formData.client.ville,
+  typeAppel:       formData.client.typeAppel,
+  typeRequete:     formData.requete.typeRequete,
+  objetRequete:    formData.requete.objetRequete,
+  detailRequete:   formData.requete.detailRequete,
+  userId:          user.value.id,
+  satisfaction:    formData.requete.satisfaction || 'non_satisfait',
+  ticket:          formData.requete.ticket,
+  raison_ticket:   formData.requete.raisonticket
+}
+  
 
   try {
     const token = localStorage.getItem('token')
@@ -646,7 +670,7 @@ const submitForm = async () => {
 // ── RESET FORMULAIRE ──
 const resetForm = () => {
   if (confirm('Êtes-vous sûr de vouloir réinitialiser ?')) {
-    Object.assign(formData.client,  { civilite: '', nom: '', prenom: '', typeAppel: '', telephone: '', telephone_perso: '', ville: '', anonymat: false })
+    Object.assign(formData.client,  { civilite: '', nom: '', prenom: '', typeAppel: '', telephone: '', telephone_perso: '', ville: '', anonymat: false, masquage: false })
     Object.assign(formData.requete, { objetRequete: '', typeRequete: '', detailRequete: '', satisfaction: '', ticket: false, raisonticket: '' })
     resetSearch()
   }
@@ -661,12 +685,24 @@ const handleAnonymatChange = () => {
   if (!formData.client.anonymat) {
     formData.client.nom = ''; formData.client.prenom = ''; formData.client.telephone_perso = ''
   } else {
-    formData.client.nom = 'ANONYMAT'; formData.client.prenom = 'ANONYMAT'; formData.client.telephone_perso = 'XXXXXXXXXX'
+    formData.client.nom = 'ANONYMAT'; formData.client.prenom = 'ANONYMAT'; formData.client.telephone_perso = '0000000000'
     document.getElementById('nom').readOnly = true
     document.getElementById('prenom').readOnly = true
     document.getElementById('telephone_perso').readOnly = true
   }
 }
+
+const handleMasquageChange = () => {
+  const telEl = document.getElementById('telephone')
+  if (!formData.client.masquage) {
+    if (telEl) telEl.readOnly = false
+    formData.client.telephone = ''
+  } else {
+    formData.client.telephone = '0000000000'
+    if (telEl) telEl.readOnly = true
+  }
+}
+
 
 const confirmLogout = async () => {
   try {
@@ -706,19 +742,30 @@ const confirmLogout = async () => {
 .tabs { display: flex; background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
 .tab {
   flex: 1; padding: 18px 20px; text-align: center;
-  cursor: pointer; border: none; background: none;
-  font-size: 16px; font-weight: 600; color: #6c757d;
+  cursor: pointer; border: none;
+  font-size: 16px; font-weight: 600;
   transition: all 0.3s ease; position: relative;
 }
-.tab.active { color: #667eea; background-color: white; }
+/* Onglet inactif : grisé simple */
+.tab:not(.active) {
+  color: #94a3b8;
+  background: #e2e8f0;
+}
+.tab.active {
+  color: #667eea;
+  background-color: #fff;
+}
 .tab.active::after {
   content: ''; position: absolute; bottom: -2px; left: 0;
   width: 100%; height: 3px;
   background: linear-gradient(90deg, #667eea, #764ba2);
 }
+.tab:disabled,
 .tab.disabled {
   cursor: not-allowed;
-  color: #adb5bd;
+  color: #9ca3af;
+  background: #cbd5e1;
+  opacity: 0.85;
 }
 
 /* ── CONTENU ONGLETS ── */
@@ -892,7 +939,8 @@ input:focus, select:focus, textarea:focus {
 textarea { resize: vertical; min-height: 120px; }
 
 .checkbox-item { display: flex; align-items: center; gap: 10px; margin-top: 32px; }
-.checkbox-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+.checkbox-item.checkbox-masquage { margin-top: 14px; flex-wrap: wrap; }
+.checkbox-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; flex-shrink: 0; }
 .checkbox-item label { margin-bottom: 0; cursor: pointer; font-size: 15px; }
 
 /* ── HISTORIQUE ── */

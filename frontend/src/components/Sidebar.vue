@@ -100,7 +100,7 @@
                 <path d="M12 2V22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
           </span>
-          <span class="nav-text">Localités</span>
+          <span class="nav-text">Villes/Communes/Localités</span>
         </router-link>
 
          <router-link to="/utilisateurs" class="nav-item" active-class="active" v-if="['admin'].includes(userRole)">
