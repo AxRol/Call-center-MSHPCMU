@@ -8,14 +8,14 @@ const __dirname  = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 // --- Connexion locale (développement) ---
-// const connectionConfig = {
-//   host:     process.env.DB_HOST     || 'localhost',
-//   user:     process.env.DB_USER     || 'postgres',
-//   password: process.env.DB_PASSWORD || '',
-//   database: process.env.DB_NAME     || 'centre_appels',
-//   port:     Number(process.env.DB_PORT) || 5432,
-//   ssl:      false,
-// }; 
+/* const connectionConfig = {
+  host:     process.env.DB_HOST     || 'localhost',
+  user:     process.env.DB_USER     || 'postgres',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME     || 'centre_appels',
+  port:     Number(process.env.DB_PORT) || 5432,
+  ssl:      false,
+}; */
 
 // --- Connexion Neon (production) — décommenter pour le déploiement ---
 const connectionConfig = process.env.DATABASE_URL
@@ -31,7 +31,6 @@ const connectionConfig = process.env.DATABASE_URL
       port:     Number(process.env.DB_PORT) || 5432,
       ssl:      { rejectUnauthorized: false },
     };
-
 
 const pool = new pg.Pool({
   ...connectionConfig,

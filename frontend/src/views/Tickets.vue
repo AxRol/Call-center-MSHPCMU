@@ -86,7 +86,8 @@
               <th>Note</th>
               <th>Traité le</th>
               <th>Traité par</th>
-              <th v-if="user.role !== 'agent'">Actions</th>
+              <!-- <th v-if="user.role !== 'agent'">Actions</th> -->
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -117,7 +118,8 @@
               <td class="id-cell">{{ tickets.date_traitement }}</td>
               <td class="id-cell">{{ tickets.traite_par }}</td>
               
-              <td v-if="user.role !== 'agent'">
+              <!-- <td v-if="user.role !== 'agent'"> -->
+              <td>
                 <div class="action-btns">
                   <button class="action-btn detail" title="Détail" @click="openModal('detail', tickets)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -453,11 +455,11 @@ const baseTicketsList = computed(() => {
   const myUsername = user.value?.username || ''
   const myId = String(user.value?.id ?? '')
 
-  // Agent: uniquement les tickets qu'il a créés
-  if (userRole.value === 'agent') {
-    if (!myUsername) return []
-    return tickets.value.filter(t => t.créé_par === myUsername)
-  }
+  //// Agent: uniquement les tickets qu'il a créés
+  //if (userRole.value === 'agent') {
+  //  if (!myUsername) return []
+  //  return tickets.value.filter(t => t.créé_par === myUsername)
+  //}
 
   // Inspecteur: uniquement les tickets qui lui sont assignés
   if (userRole.value === 'inspecteur') {
