@@ -30,8 +30,38 @@
     <div class="kpi-grid">
       <div class="kpi-card" v-for="kpi in kpiCards" :key="kpi.id">
         <div class="kpi-icon" :style="{ background: kpi.bg, color: kpi.color }">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <circle cx="12" cy="12" r="10"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <!-- Appels totaux -->
+            <g v-if="kpi.icon === 'calls'">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+            </g>
+            <!-- Taux de satisfaction -->
+            <g v-else-if="kpi.icon === 'percent'">
+              <line x1="19" y1="5" x2="5" y2="19" />
+              <circle cx="6.5" cy="6.5" r="2.5" />
+              <circle cx="17.5" cy="17.5" r="2.5" />
+            </g>
+            <!-- Tickets en attente -->
+            <g v-else-if="kpi.icon === 'clock'">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </g>
+            <!-- Tickets ouverts -->
+            <g v-else-if="kpi.icon === 'inbox'">
+              <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+              <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+            </g>
+            <!-- Tickets clos -->
+            <g v-else-if="kpi.icon === 'check'">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </g>
+            <!-- Tickets terminés -->
+            <g v-else-if="kpi.icon === 'award'">
+              <circle cx="12" cy="8" r="6" />
+              <path d="M15.09 13a5.5 5.5 0 0 1-6.18 0L7 23l5-3 5 3-1.09-10z" />
+            </g>
+            <circle v-else cx="12" cy="12" r="10" />
           </svg>
         </div>
         <div class="kpi-body">
@@ -444,6 +474,7 @@ const kpiCards = computed(() => {
   const all = [
     {
       id: 1,
+      icon: 'calls',
       onlyNonInspecteur: true,
       label: 'Appels totaux',
       value: appelsThisMonth.value.length,
@@ -451,6 +482,7 @@ const kpiCards = computed(() => {
     },
     {
       id: 5,
+      icon: 'percent',
       onlyNonInspecteur: true,
       label: 'Taux de satisfaction',
       value: satisfactionRate.value,
@@ -458,21 +490,31 @@ const kpiCards = computed(() => {
     },
     {
       id: 4,
+      icon: 'clock',
       label: 'Tickets en attente',
       value: ticketsThisMonth.value.filter(t => (t.statut || '').toLowerCase().includes('attente')).length,
       bg: 'rgba(245,158,11,0.12)', color: '#f59e0b'
     },
     {
       id: 2,
+      icon: 'inbox',
       label: 'Tickets ouverts',
       value: ticketsThisMonth.value.filter(t => (t.statut || '').toLowerCase() === 'ouvert').length,
       bg: 'rgba(6,182,212,0.12)', color: '#06b6d4'
     },
     {
       id: 3,
+      icon: 'check',
       label: 'Tickets clos',
       value: ticketsThisMonth.value.filter(t => (t.statut || '').toLowerCase() === 'clos').length,
       bg: 'rgba(16,185,129,0.12)', color: '#10b981'
+    },
+    {
+      id: 6,
+      icon: 'award',
+      label: 'Tickets terminés',
+      value: ticketsThisMonth.value.filter(t => (t.statut || '').toLowerCase() === 'termine').length,
+      bg: 'rgba(139,92,246,0.12)', color: '#8b5cf6'
     }
   ]
   return isInspecteur.value ? all.filter(k => !k.onlyNonInspecteur) : all

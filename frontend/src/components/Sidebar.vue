@@ -160,7 +160,8 @@
     <!-- Bouton de déconnexion -->
     <div class="sidebar-logout">
       <button class="logout-btn" @click="confirmLogout">
-        <span class="logout-icon" aria-hidden="true">🚪</span>
+        <!-- <span class="logout-icon" aria-hidden="true">🚪</span> -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         <span class="logout-text">Déconnexion</span>
       </button>
     </div>

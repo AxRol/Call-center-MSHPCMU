@@ -125,7 +125,7 @@
                       <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
                     </svg>
                   </button>
-                  <button class="action-btn edit" title="Éditer" @click="openModal('edit', tickets)" :disabled="tickets.statut === 'clos' || tickets.statut === 'termine' || user.role === 'agent'">
+                  <button class="action-btn edit" :title="tickets.statut === 'en attente' ? 'Ouvrir' : 'Éditer'" @click="openModal('edit', tickets)" :disabled="tickets.statut === 'clos' || tickets.statut === 'termine' || user.role === 'agent'">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                       <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                       <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -225,7 +225,7 @@
               </div>
               <div class="modal-footer">
                 <button class="btn-outline" @click="closeModal">Fermer</button>
-                <button class="btn-primary" @click="openModal('edit', modal.data); " v-if="modal.data?.statut !== 'clos' && user.role !== 'agent'">Éditer</button>
+                <button class="btn-primary" @click="openModal('edit', modal.data); " v-if="modal.data?.statut !== 'clos' && user.role !== 'agent'">{{ modal.data?.statut === 'en attente' ? 'Ouvrir' : 'Éditer' }}</button>
               </div>
             </template>
 
@@ -313,7 +313,7 @@
                       <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                   </div>
-                  <p>Êtes-vous sûr de vouloir supprimer l'ticket <strong>#{{ modal.data?.code }}</strong> ?</p>
+                  <p>Êtes-vous sûr de vouloir supprimer le ticket <strong>#{{ modal.data?.code }}</strong> ?</p>
                   <p class="delete-warning">Cette action est irréversible.</p>
                 </div>
               </div>
@@ -361,9 +361,9 @@
 
                 <div class="form-grid">
                   <div class="form-group full">
-                    <label>Sélectionner un agent <span style="color:var(--danger)">*</span></label>
+                    <label>Superviseur ou inspecteur <span style="color:var(--danger)">*</span></label>
                     <select v-model="assignForm.user_assigne_id">
-                      <option value="">-- Sélectionner un agent --</option>
+                      <option value="">-- Choisir un superviseur ou inspecteur --</option>
                       <option v-for="agent in agentsList" :key="agent.id" :value="agent.id">
                         {{ agent.username }} — {{ agent.role }}
                       </option>
@@ -607,11 +607,74 @@ async function deleteSelected() {
 const modal = ref({ show: false, type: '', data: null })
 const form = ref({})
 
-function openModal(type, data = null) {
+// ── ANCIEN openModal (lignes modifiées / remplacées) ─────────────────────────
+// function openModal(type, data = null) {
+//   modal.value = { show: true, type, data }
+//   if (type === 'edit' && data) {
+//     form.value = { ...data }
+//     if (data.status === 'en attente') {
+//       form.value.status = 'ouvert'
+//     }
+//  } else if (type === 'assign' && data) {
+//     assignForm.value = {
+//       user_assigne_id: data.user_assigne_id || ''
+//     }
+//   }
+// }
+
+/**
+ * Au clic sur « Éditer » : si et seulement si statut === 'en attente',
+ * enregistre le passage à « ouvert » côté API puis rouvre le formulaire avec les données à jour.
+ */
+async function ouvrirTicketEnAttente(ticket) {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    alert('Vous devez être connecté')
+    return null
+  }
+  const payload = {
+    statut: 'ouvert',
+    priorite: ticket.priorite || 'N/A',
+    resolution: ticket.resolution || null,
+    date_traitement: new Date().toISOString(),
+    traite_par_id: user.value.id,
+    user_assigne_id: null,
+    action: 'creation/modification'
+  }
+  try {
+    const resp = await fetch(`${apiBase}/${ticket.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    })
+    const json = await resp.json()
+    if (!resp.ok) throw new Error(json.message || 'Erreur serveur')
+    await loadTickets()
+    return tickets.value.find(t => t.id === ticket.id) || { ...ticket, statut: 'ouvert' }
+  } catch (err) {
+    console.error(err)
+    alert('Impossible de passer le ticket de « en attente » à « ouvert »')
+    return null
+  }
+}
+
+async function openModal(type, data = null) {
+  if (type === 'edit' && data && data.statut === 'en attente') {
+    const fresh = await ouvrirTicketEnAttente(data)
+    if (!fresh) return
+    modal.value = { show: true, type, data: fresh }
+    form.value = { ...fresh }
+    return
+  }
+
   modal.value = { show: true, type, data }
   if (type === 'edit' && data) {
     form.value = { ...data }
- } else if (type === 'assign' && data) {
+  } else if (type === 'assign' && data) {
     // Pré-remplir avec les valeurs actuelles du ticket
     assignForm.value = {
       user_assigne_id: data.user_assigne_id || ''
@@ -916,9 +979,10 @@ async function loadAgents() {
       if (Array.isArray(result))            items = result
       else if (Array.isArray(result.data))  items = result.data
       else if (Array.isArray(result.rows))  items = result.rows
-      const rolesAutorises = ['agent', 'superviseur', 'manager', 'inspecteur']
+      // Pour l'assignation d'un ticket : uniquement superviseurs et inspecteurs
+      const rolesPourAssignation = ['superviseur', 'inspecteur']
       agentsList.value = items
-        .filter(u => rolesAutorises.includes((u.role || '').toLowerCase()))
+        .filter(u => rolesPourAssignation.includes((u.role || '').toLowerCase()))
         .map(u => ({
           id:       u.uid || u.id,
           username: u.username || u.login,
