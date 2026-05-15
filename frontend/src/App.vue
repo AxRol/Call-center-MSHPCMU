@@ -1,7 +1,7 @@
 <template>
   <div class="app-layout" :class="{ 'auth-page': isAuthPage, 'form-page': isFormulairePage }">
     <Sidebar v-if="!isAuthPage" />
-    <div class="main-wrapper" :class="{ 'full-width': isAuthPage, 'centered-form': isFormulairePage, 'sidebar-open': !isAuthPage && mainShift }">
+    <div class="main-wrapper" :class="{ 'full-width': isAuthPage, 'sidebar-collapsed': isCollapsed,  'centered-form': isFormulairePage, 'sidebar-open': !isAuthPage && mainShift }">
       <Header v-if="!isAuthPage" />
       <main class="main-content">
         <router-view v-slot="{ Component }">
@@ -55,6 +55,33 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+
+.main-wrapper {
+  margin-left: 260px; /* Largeur sidebar ouverte */
+  transition: margin-left 0.3s ease; /* Animation fluide */
+}
+
+/* Quand la sidebar est réduite, on réduit la marge du contenu */
+.main-wrapper.sidebar-collapsed {
+  margin-left: 64px; /* Largeur sidebar réduite */
+}
+
+/* Dans :root ou au début du style */
+:root {
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 64px;
+}
+
+/* Ligne CRUCIALE : quand la sidebar est réduite */
+.sidebar.collapsed + .main-wrapper {
+  margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Pour le mobile ou le mode plein écran */
+.main-wrapper.full-width {
+  margin-left: 0;
+}
+
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -109,7 +136,12 @@ onBeforeUnmount(() => {
   flex-direction: column;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
+  .main-wrapper { margin-left: 0; }
+} */
+
+/* Mobile */
+@media (max-width: 1024px) {
   .main-wrapper { margin-left: 0; }
 }
 </style>

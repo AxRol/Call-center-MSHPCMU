@@ -1,15 +1,25 @@
 <template>
   <div class="app-layout" :class="{ 'auth-page': isAuthPage, 'form-page': isFormulairePage }">
     <Sidebar v-if="!isAuthPage" />
-    <div class="main-wrapper" :class="{ 'full-width': isAuthPage, 'centered-form': isFormulairePage }">
+    
+    <div 
+      class="main-wrapper" 
+      :class="{
+        'full-width': isAuthPage, 
+        'centered-form': isFormulairePage,
+        'sidebar-collapsed': !isAuthPage && isCollapsed // Géré via l'état du composant
+      }"
+    >
       <Header v-if="!isAuthPage" />
+      
       <main class="main-content">
         <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
+          <transition name="page-fade" mode="out-in">
             <component :is="Component" />
           </transition>
         </router-view>
       </main>
+
       <Footer v-if="!isAuthPage" />
     </div>
   </div>
@@ -30,9 +40,9 @@ const isAuthPage = computed(() => {
   return route.name === 'Login' || route.name === 'Inscription' || route.name === 'Formulaire_appel'
 })
 
-/* const isFormulairePage = computed(() => {
+const isFormulairePage = computed(() => {
   return route.name === 'Formulaire_appel'
-}) */
+})
 
 // Anti-"blocage après déconnexion":
 // Si la déconnexion supprime le token du localStorage, on redirige vers /login
@@ -55,61 +65,91 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+/* Configuration des variables locales */
 .app-layout {
+  --sidebar-w: 280px;
+  --sidebar-collapsed-w: 80px;
+  --header-h: 70px;
+  --bg-main: #f8fafc;
+  --accent-color: #004a99;
+  
   display: flex;
   min-height: 100vh;
+  background: var(--bg-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #1e293b;
 }
 
+/* Styles spécifique Auth (Login) */
 .app-layout.auth-page {
-  background: var(--bg-primary);
-}
-
-.app-layout.form-page {
-  background: white;
+  background: #f1f5f9;
 }
 
 .main-wrapper {
   flex: 1;
-  margin-left: var(--sidebar-width);
   display: flex;
   flex-direction: column;
   min-width: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Marge automatique si sidebar présente */
+  padding-left: 0; 
 }
 
-.main-wrapper.full-width {
-  margin-left: 0;
-}
-
-.main-wrapper.centered-form {
-  justify-content: center;
-  align-items: center;
+/* Ajustement dynamique du contenu par rapport à la sidebar */
+@media (min-width: 1024px) {
+  .main-wrapper:not(.full-width) {
+    margin-left: var(--sidebar-w);
+  }
 }
 
 .main-content {
   flex: 1;
-  padding: 28px 32px;
-  background: var(--bg-primary);
-  
+  padding: 1.5rem;
+  transition: all 0.3s ease;
 }
 
-.app-layout.auth-page .main-content {
-  padding: 0;
+/* Page Formulaire d'appel (Design focalisé) */
+.app-layout.form-page {
+  background: #f8fafc;
 }
 
 .app-layout.form-page .main-content {
-  background: white;
-  padding: 28px 32px;
-  border-radius: 0; /* Supprime les coins arrondis pour un vrai plein écran */
-  box-shadow: none; /* Supprime l'ombre qui créait un effet de flottement */
-  max-width: none; /* Supprime la limite de largeur */
+  max-width: 1100px;
+  margin: 0 auto;
   width: 100%;
-  min-height: 80vh; /* Prend toute la hauteur de l'écran */
-  margin: 0; /* Supprime les marges automatiques */
-  display: flex;
-  flex-direction: column;
 }
 
-@media (max-width: 768px) {
-  .main-wrapper { margin-left: 0; }
+/* Animations de transition de page */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Responsive mobile */
+@media (max-width: 1024px) {
+  .main-wrapper {
+    margin-left: 0 !important;
+  }
+  .main-content {
+    padding: 1rem;
+  }
+}
+
+/* Dark Mode support */
+@media (prefers-color-scheme: dark) {
+  .app-layout:not(.auth-page):not(.form-page) {
+    background: #0f172a;
+    color: #f1f5f9;
+  }
 }
 </style>

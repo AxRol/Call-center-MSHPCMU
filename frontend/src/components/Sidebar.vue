@@ -1,15 +1,18 @@
 <template>
   <!-- Backdrop mobile -->
-  <transition name="backdrop">
+  <!-- <transition name="backdrop">
     <div v-if="isMobile && isOpen" class="sidebar-backdrop" @click="close"></div>
   </transition>
 
-  <aside class="sidebar" :class="{ collapsed: isCollapsed, open: isOpen, hidden: !isOpen }">
+  <aside class="sidebar" :class="{ collapsed: isCollapsed, open: isOpen, hidden: !isOpen }"> -->
+  <div v-if="isOpen" class="sidebar-overlay" @click="toggle"></div>
+
+  <aside class="sidebar" :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }">
     <div class="sidebar-brand">
       <div class="brand-icon">
         <img src="@/assets/images/logo_mshpcmu.png" alt="MSHPCMU logo" width="22" height="22" />
       </div>
-      <span class="brand-name">Le 143</span>
+      <span class="brand-name">Le CRM du 143</span>
       <!-- Bouton réduire (desktop uniquement) -->
       <button v-if="!isMobile" class="collapse-btn" @click="isCollapsed = !isCollapsed" :title="isCollapsed ? 'Développer' : 'Réduire'">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -20,7 +23,6 @@
 
     <nav class="sidebar-nav">
       <div class="nav-section">
-
         <router-link to="/dashboard" class="nav-item" active-class="active">
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -32,7 +34,7 @@
           </span>
           <span class="nav-text">Dashboard</span>
         </router-link>
-        
+
         <router-link to="/appels" class="nav-item" active-class="active" v-if="userRole !='inspecteur'">
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -59,9 +61,7 @@
 
       <div class="nav-section" v-if="['admin', 'manager', 'superviseur'].includes(userRole)">
         <span class="nav-label">Paramètres</span>
-
         <router-link to="/typerequetes" class="nav-item" active-class="active">
-
           <span class="nav-icon">
            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 2V5" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -73,9 +73,7 @@
           </span>
           <span class="nav-text">Catégorie de requête</span>
         </router-link>
-
         <router-link to="/typeappels" class="nav-item" active-class="active">
-
           <span class="nav-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" stroke-width="1.5"/>
@@ -89,9 +87,7 @@
           </span>
           <span class="nav-text">Catégorie d'appel</span>
         </router-link>
-
         <router-link to="/localites" class="nav-item" active-class="active">
-
           <span class="nav-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5"/>
@@ -100,11 +96,9 @@
                 <path d="M12 2V22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
           </span>
-          <span class="nav-text">Villes/Communes/Localités</span>
+          <span class="nav-text">Localités</span>
         </router-link>
-
          <router-link to="/utilisateurs" class="nav-item" active-class="active" v-if="['admin'].includes(userRole)">
-
           <span class="nav-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M17 9C19.2091 9 21 7.20914 21 5C21 2.79086 19.2091 1 17 1C14.7909 1 13 2.79086 13 5C13 7.20914 14.7909 9 17 9Z" stroke="currentColor" stroke-width="1.5"/>
@@ -117,7 +111,6 @@
           </span>
           <span class="nav-text">Utilisateurs</span>
         </router-link>
-
         <router-link to="/equipes" class="nav-item" active-class="active" v-if="['admin'].includes(userRole)">
           <span class="nav-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -129,9 +122,7 @@
           </span>
           <span class="nav-text">Équipes</span>
         </router-link>
-
         <router-link to="/rapports" class="nav-item" active-class="active">
-
           <span class="nav-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -160,7 +151,6 @@
     <!-- Bouton de déconnexion -->
     <div class="sidebar-logout">
       <button class="logout-btn" @click="confirmLogout">
-        <!-- <span class="logout-icon" aria-hidden="true">🚪</span> -->
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         <span class="logout-text">Déconnexion</span>
       </button>
@@ -175,8 +165,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSidebar } from '@/composables/useSidebar.js'
 
-const { isOpen, isMobile, close, init } = useSidebar()
-const isCollapsed = ref(false)
+const { isCollapsed, isOpen, isMobile, close, init, toggle } = useSidebar()
+//const isCollapsed = ref(false)
+
 
 const router = useRouter()
 
@@ -260,15 +251,28 @@ function confirmLogout() {
 .backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
 
 .sidebar {
+  
+}
+
+/* Classe déclenchée par le bouton du header */
+.sidebar.is-collapsed {
+  width: 64px;
+}
+
+.sidebar {
+  width: 260px;
+  transition: width 0.3s ease;
+  left: 0;
+  height: 100vh;
   position: fixed;
-  left: 0; top: 0; bottom: 0;
-  width: var(--sidebar-width);
+  /* left: 0; top: 0; bottom: 0;
+  width: var(--sidebar-width); */
   background: var(--bg-secondary);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   z-index: 100;
-  transition: transform 0.3s ease, width 0.3s ease;
+  /* transition: transform 0.3s ease, width 0.3s ease; */
   overflow: hidden;
 }
 
@@ -462,5 +466,42 @@ function confirmLogout() {
 
 .collapsed .logout-text {
   display: none;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 998; /* Juste en dessous de la sidebar */
+}
+
+@media (max-width: 1024px) {
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -280px; /* Caché par défaut à gauche */
+    top: 0;
+    bottom: 0;
+    z-index: 999;
+    transition: transform 0.3s ease, left 0.3s ease;
+    box-shadow: none;
+  }
+
+  /* Quand on clique sur le bouton du header (isOpen devient true) */
+  .sidebar.is-open {
+    left: 0;
+    transform: translateX(0);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Forcer la largeur pleine sur mobile même si 'is-collapsed' est actif */
+  .sidebar.is-collapsed {
+    width: 280px; 
+  }
 }
 </style>

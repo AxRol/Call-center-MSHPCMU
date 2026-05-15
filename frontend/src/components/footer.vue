@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <span class="footer-left">© 2026 <strong>MSHPCMU DISD 143</strong> — Tous droits réservés</span>
+    <span class="footer-left">© 2026 <strong>MSHPCMU | DISD | DCRP | Le CRM du 143</strong> — Tous droits réservés</span>
     <span class="footer-right">
     </span>
   </footer>

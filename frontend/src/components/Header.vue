@@ -38,10 +38,8 @@ const route = useRoute()
 const showNotifs = ref(false)
 
 const currentRoute = computed(() => {
-
-  const names = { '/dashboard': 'Dashboard', '/appels': 'Appels', '/tickets': 'Tickets', '/formulaire_appel': 'Formulaire d\'appel',
-                  '/typeappels': 'Catégories d\'appels', '/typerequetes': 'Catégories de requêtes', '/localites': 'Localités', '/utilisateurs': 'Utilisateurs', '/rapports': 'Rapports', '/equipes': 'Équipes' }
-
+  const names = { '/back_office/dashboard': 'Dashboard', '/back_office/appels': 'Appels', '/back_office/tickets': 'Tickets', '/front_office/formulaire_appel': 'Formulaire d\'appel',
+                  '/back_office/typeappels': 'Catégories d\'appels', '/back_office/typerequetes': 'Catégories de requêtes', '/back_office/localites': 'Localités', '/back_office/utilisateurs': 'Utilisateurs', '/back_office/rapports': 'Rapports', '/back_office/equipes': 'Équipes' }
   return names[route.path] || route.path
 })
 

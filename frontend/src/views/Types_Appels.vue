@@ -463,7 +463,7 @@ async function saveForm() {
 .status-badge.attente { background: rgba(245,158,11,0.12); color: #f59e0b; }
 .status-badge.annule { background: rgba(239,68,68,0.12); color: #ef4444; }
 
-.action-btns { display: flex; gap: 4px; }
+.action-btns { display: flex; justify-content: flex-end; gap: 8px;}
 .action-btn {
   width: 30px; height: 30px; border-radius: var(--radius-sm);
   border: 1px solid var(--border); background: var(--bg-secondary);
